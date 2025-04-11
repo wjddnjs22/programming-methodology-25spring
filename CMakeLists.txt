@@ -1,25 +1,24 @@
 cmake_minimum_required(VERSION 3.14)
-project(CalculatorTDD)
+project(programming-methodology-25spring-3)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Use GoogleTest via FetchContent (no manual download needed)
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+# 테스트용 파일 추가
+add_executable(test_calculator test_calculator.cpp Calculator.cpp)
+
+# googletest 직접 추가한 경우
+add_subdirectory(${CMAKE_SOURCE_DIR}/build/_deps/googletest-src)
+
+# include 경로 추가
+target_include_directories(test_calculator PRIVATE
+    ${CMAKE_SOURCE_DIR}/build/_deps/googletest-src/googletest/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/googletest-src/googlemock/include
 )
-FetchContent_MakeAvailable(googletest)
 
-include(CTest)
+# gtest 라이브러리 연결
+target_link_libraries(test_calculator gtest gtest_main)
+
+# 테스트 등록 (ctest에서 사용할 수 있게)
 enable_testing()
-
-add_executable(test_calculator
-    calculator.cpp
-    test_calculator.cpp
-)
-
-target_link_libraries(test_calculator gtest_main)
-
-include(GoogleTest)
-gtest_discover_tests(test_calculator)
+add_test(NAME CalculatorTest COMMAND test_calculator)
